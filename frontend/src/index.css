@@ -171,7 +171,3 @@ td:last-child { text-align: right; }
 .form-group input:disabled { opacity: 0.5; cursor: not-allowed; }
 .form-group input::placeholder { color: #475569; }
 
-/* Eliminar flechas de inputs tipo number */
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-input[type='number'] { -moz-appearance: textfield; }

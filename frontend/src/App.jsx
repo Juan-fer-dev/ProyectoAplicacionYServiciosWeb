@@ -11,17 +11,14 @@ export default function App() {
 
         <aside className="sidebar">
           <div className="sidebar-header">
-            <h1>Knowledge<span>Map</span></h1>
+            <h1>Mapa de <span>Conocimiento</span></h1>
             <p>Panel de gestión</p>
           </div>
           <nav className="sidebar-nav">
-            <NavLink to="/aliado" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>🤝 Aliados</NavLink>
-            <NavLink to="/proyectos" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>📁 Proyectos</NavLink>
-            <NavLink to="/tipo-producto" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>🏷️ Tipo Producto</NavLink>
+            <NavLink to="/aliado" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Aliados</NavLink>
+            <NavLink to="/proyectos" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Proyectos</NavLink>
+            <NavLink to="/tipo-producto" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Tipo Producto</NavLink>
           </nav>
-          <div className="sidebar-footer">
-            <p>API: localhost:5034</p>
-          </div>
         </aside>
 
         <main className="main-content">
