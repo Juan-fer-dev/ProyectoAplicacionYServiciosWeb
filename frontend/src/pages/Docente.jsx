@@ -17,7 +17,7 @@ const REQUERIDOS = [
   'perfil','conv_minciencia','nacionalidaad'
 ];
 
-export default function Docente() {
+export default function Docente({ readonly = false }) {
   const [datos, setDatos]               = useState([]);
   const [cargando, setCargando]         = useState(true);
   const [error, setError]               = useState('');
@@ -102,7 +102,7 @@ export default function Docente() {
           <h2>Docentes</h2>
           <p>Gestión del perfil profesoral e investigadores</p>
         </div>
-        <button className="btn-primary" onClick={abrirCrear}>+ Nuevo docente</button>
+        {!readonly && <button className="btn-primary" onClick={abrirCrear}>+ Nuevo docente</button>}
       </div>
 
       {error && <div className="alert-error">{error}</div>}
@@ -133,10 +133,13 @@ export default function Docente() {
                   <td>{fila.telefono}</td>
                   <td>{fila.escalafon}</td>
                   <td>{fila.nacionalidaad}</td>
-                  <td>
-                    <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
-                    <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
-                  </td>
+                  {!readonly && (
+                    <td onClick={e => e.stopPropagation()}>
+                      <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
+                      <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
+                    </td>
+                  )}
+                  {readonly && <td></td>}
                 </tr>
               ))}
             </tbody>

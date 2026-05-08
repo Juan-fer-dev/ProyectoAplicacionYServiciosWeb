@@ -6,7 +6,7 @@ const TABLA = 'aliado';
 const PK = 'nit';
 const VACIO = { nit: '', razon_social: '', nombre_contacto: '', correo: '', telefono: '', ciudad: '' };
 
-export default function Aliado() {
+export default function Aliado({ readonly = false }) {
   const [datos, setDatos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export default function Aliado() {
 
   useEffect(() => { cargar(); }, []);
 
-  const abrirCrear  = () => { setForm(VACIO); setModal('crear'); };
+  const abrirCrear = () => { setForm(VACIO); setModal('crear'); };
   const abrirEditar = (fila) => { setForm(fila); setPkEditar(fila[PK]); setModal('editar'); };
   const cerrarModal = () => { setModal(null); setForm(VACIO); setPkEditar(null); };
 
@@ -81,7 +81,7 @@ export default function Aliado() {
           <h2>Aliados</h2>
           <p>Gestión de empresas aliadas</p>
         </div>
-        <button className="btn-primary" onClick={abrirCrear}>+ Nuevo aliado</button>
+        {!readonly && <button className="btn-primary" onClick={abrirCrear}>+ Nuevo aliado</button>}
       </div>
 
       {error && <div className="alert-error">{error}</div>}
@@ -113,10 +113,13 @@ export default function Aliado() {
                   <td>{fila.correo}</td>
                   <td>{fila.telefono}</td>
                   <td>{fila.ciudad}</td>
-                  <td>
-                    <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
-                    <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
-                  </td>
+                  {!readonly && (
+                    <td onClick={e => e.stopPropagation()}>
+                      <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
+                      <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
+                    </td>
+                  )}
+                  {readonly && <td></td>}
                 </tr>
               ))}
             </tbody>

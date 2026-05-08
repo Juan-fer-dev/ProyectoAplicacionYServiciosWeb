@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { listar, crear, actualizar, eliminar } from '../api/api';
 import Modal from '../components/Modal';
+import SeccionRelacion from '../components/SeccionRelacion';
 
 const TABLA = 'producto';
 const PK    = 'id';
 const VACIO = { id: '', nombre: '', categoria: '', fecha_entrega: '', proyecto: '', tipo_producto: '' };
 
-export default function Producto() {
+export default function Producto({ readonly = false }) {
   const [datos, setDatos]               = useState([]);
   const [cargando, setCargando]         = useState(true);
   const [error, setError]               = useState('');
@@ -80,9 +81,9 @@ export default function Producto() {
       cerrarModal();
     } catch (e) {
       const msg = e.response?.data?.detalle || e.message || 'Error desconocido';
-      if (msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('primary key')) {
+      if (msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('primary key'))
         setErrorModal(`El ID ${form.id} ya existe en la base de datos.`);
-      } else { setErrorModal(msg); }
+      else setErrorModal(msg);
     } finally { setGuardando(false); }
   };
 
@@ -96,7 +97,7 @@ export default function Producto() {
     } finally { setConfirmEliminar(null); }
   };
 
-  const opcionesDocente = docentes.map(d => ({ valor: d.cedula, etiqueta: `${d.cedula} - ${d.nombres} ${d.apellidos}` }));
+  const opcionesDocente = { docente: docentes.map(d => ({ valor: d.cedula, etiqueta: `${d.cedula} - ${d.nombres} ${d.apellidos}` })) };
 
   return (
     <div>
@@ -105,7 +106,7 @@ export default function Producto() {
           <h2>Productos</h2>
           <p>Gestión de productos resultantes de investigación</p>
         </div>
-        <button className="btn-primary" onClick={abrirCrear}>+ Nuevo producto</button>
+        {!readonly && <button className="btn-primary" onClick={abrirCrear}>+ Nuevo producto</button>}
       </div>
 
       {error && <div className="alert-error">{error}</div>}
@@ -125,18 +126,20 @@ export default function Producto() {
             </thead>
             <tbody>
               {datos.map((fila, i) => (
-                <tr key={i} style={{ cursor:'pointer' }}
-                  onClick={() => setProductoSeleccionado(fila)}>
+                <tr key={i} style={{ cursor: 'pointer' }} onClick={() => setProductoSeleccionado(fila)}>
                   <td>{fila.id}</td>
                   <td>{fila.nombre}</td>
                   <td>{fila.categoria}</td>
                   <td>{fila.fecha_entrega?.split('T')[0] ?? '-'}</td>
                   <td>{proyectos.find(p => p.id == fila.proyecto)?.titulo || fila.proyecto}</td>
                   <td>{tiposProducto.find(t => t.id == fila.tipo_producto)?.nombre || fila.tipo_producto}</td>
-                  <td onClick={e => e.stopPropagation()}>
-                    <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
-                    <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
-                  </td>
+                  {!readonly && (
+                    <td onClick={e => e.stopPropagation()}>
+                      <button className="btn-link-edit" onClick={() => abrirEditar(fila)}>Editar</button>
+                      <button className="btn-link-delete" onClick={() => setConfirmEliminar(fila[PK])}>Eliminar</button>
+                    </td>
+                  )}
+                  {readonly && <td></td>}
                 </tr>
               ))}
             </tbody>
@@ -144,13 +147,12 @@ export default function Producto() {
         )}
       </div>
 
-      {/* Sección docente_producto */}
       {productoSeleccionado && (
         <div className="proyecto-detalle">
           <div className="proyecto-detalle-header">
             <div>
-              <span style={{ fontSize:'13px', color:'#64748b' }}>Producto seleccionado</span>
-              <h3 style={{ color:'#fff', fontSize:'15px', margin:'2px 0 0' }}>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>Producto seleccionado</span>
+              <h3 style={{ color: '#fff', fontSize: '15px', margin: '2px 0 0' }}>
                 #{productoSeleccionado.id} — {productoSeleccionado.nombre}
               </h3>
             </div>
@@ -161,22 +163,22 @@ export default function Producto() {
             tabla="docente_producto"
             campoFiltro="producto"
             valorFiltro={productoSeleccionado.id}
+            columnas={[{ key: 'docente', label: 'Docente',
+              render: val => { const d = docentes.find(d => d.cedula == val); return d ? `${d.cedula} - ${d.nombres} ${d.apellidos}` : val; } }]}
             campos={[
-              { key: 'producto', esInt: true, oculto: true, label: 'Producto' },
-              { key: 'docente',  esInt: true, tipo: 'select', label: 'Docente' },
+              { key: 'producto', oculto: true, esInt: true },
+              { key: 'docente',  label: 'Docente', tipo: 'select', esInt: true },
             ]}
-            columnas={[
-              { key: 'docente', label: 'Docente',
-                render: (val, opts) => opts.docente?.find(o => o.valor == val)?.etiqueta || val }
-            ]}
-            opciones={{ docente: opcionesDocente }}
+            opciones={opcionesDocente}
+            pkPath={f => ['docente', `${f.docente}/producto/${f.producto}`]}
+            buildPayload={f => ({ docente: parseInt(f.docente), producto: parseInt(f.producto) })}
           />
         </div>
       )}
 
       {modal && (
         <Modal titulo={modal === 'crear' ? 'Nuevo Producto' : 'Editar Producto'} onClose={cerrarModal}>
-          {errorModal && <div className="alert-error" style={{ marginBottom:'16px' }}>{errorModal}</div>}
+          {errorModal && <div className="alert-error" style={{ marginBottom: '16px' }}>{errorModal}</div>}
           <div className="form-grid">
             <div className="form-group">
               <label>ID</label>
@@ -221,8 +223,8 @@ export default function Producto() {
 
       {confirmEliminar !== null && (
         <Modal titulo="Confirmar eliminación" onClose={() => setConfirmEliminar(null)}>
-          <p style={{ color:'#cbd5e1', fontSize:'14px' }}>
-            ¿Estás seguro de eliminar el producto con ID <strong style={{ color:'#fff' }}>{confirmEliminar}</strong>?
+          <p style={{ color: '#cbd5e1', fontSize: '14px' }}>
+            ¿Estás seguro de eliminar el producto con ID <strong style={{ color: '#fff' }}>{confirmEliminar}</strong>?
           </p>
           <div className="modal-footer">
             <button className="btn-secondary" onClick={() => setConfirmEliminar(null)}>Cancelar</button>
