@@ -14,3 +14,5 @@ export const obtenerPorClave = (tabla, clave, valor)      => api.get(`/${tabla}/
 export const crear           = (tabla, datos)              => api.post(`/${tabla}`, datos);
 export const actualizar      = (tabla, pk, val, datos)     => api.put(`/${tabla}/${pk}/${val}`, datos);
 export const eliminar        = (tabla, pk, val)            => api.delete(`/${tabla}/${pk}/${val}`);
+
+export default api;
