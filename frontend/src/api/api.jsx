@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const api = axios.create({ baseURL: 'http://knowledgemapapi.runasp.net/api' });
 
 api.interceptors.request.use((config) => {

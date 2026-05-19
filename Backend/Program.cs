@@ -256,7 +256,8 @@ app.UseReDoc(c =>
 });
 
 // Redirige HTTP a HTTPS para mejorar la seguridad.
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Deshabilitado en MonsterASP free (sin SSL)
+
 
 // Aplica la política CORS definida como "PermitirTodo".
 app.UseCors("PermitirTodo");
