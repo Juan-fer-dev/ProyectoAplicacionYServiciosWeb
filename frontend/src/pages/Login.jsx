@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api/api';
 
 export default function Login() {
-  const [form, setForm]       = useState({ username: '', password: '' });
-  const [error, setError]     = useState('');
+  const [form, setForm]         = useState({ username: '', password: '' });
+  const [error, setError]       = useState('');
   const [cargando, setCargando] = useState(false);
-  const { login }             = useAuth();
-  const navigate              = useNavigate();
+  const { login }               = useAuth();
+  const navigate                = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -17,12 +17,12 @@ export default function Login() {
   const handleSubmit = async () => {
     setCargando(true); setError('');
     try {
-      const res = await axios.post('http://localhost:5034/api/autenticacion/token', {
-        tabla:            'usuario',
-        campoUsuario:     'username',
-        campoContrasena:  'password',
-        usuario:          form.username,
-        contrasena:       form.password,
+      const res = await api.post('/autenticacion/token', {
+        tabla:           'usuario',
+        campoUsuario:    'username',
+        campoContrasena: 'password',
+        usuario:         form.username,
+        contrasena:      form.password,
       });
       login(res.data);
       navigate('/');
@@ -47,17 +47,24 @@ export default function Login() {
         <div className="form-group">
           <label>Usuario</label>
           <input
-            name="username" type="text"
-            value={form.username} onChange={handleChange} onKeyDown={handleKeyDown}
+            name="username"
+            type="text"
+            value={form.username}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             placeholder="Ingresa tu usuario"
             autoFocus
           />
         </div>
+
         <div className="form-group" style={{ marginTop: '14px' }}>
           <label>Contraseña</label>
           <input
-            name="password" type="password"
-            value={form.password} onChange={handleChange} onKeyDown={handleKeyDown}
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             placeholder="Ingresa tu contraseña"
           />
         </div>
