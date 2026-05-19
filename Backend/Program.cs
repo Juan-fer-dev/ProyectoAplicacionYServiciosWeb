@@ -44,13 +44,15 @@ builder.Services.AddControllers();
 // CORS (Cross-Origin Resource Sharing) Intercambio de recursos de origen cruzado
 // Permite que la API sea consumida desde otros dominios.
 // Agrega CORS con una política genérica llamada "PermitirTodo".
-builder.Services.AddCors(opts =>
-{
-    opts.AddPolicy("PermitirTodo", politica => politica
-        .AllowAnyOrigin()
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => {
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://proyecto-aplicacion-y-servicios-web.vercel.app"
+        )
         .AllowAnyMethod()
-        .AllowAnyHeader()
-    );
+        .AllowAnyHeader();
+    });
 });
 
 // Agrega caché en memoria y sesión HTTP ligera (opcional).
