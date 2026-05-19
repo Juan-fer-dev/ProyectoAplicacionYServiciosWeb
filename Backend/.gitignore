@@ -1,7 +1,9 @@
 # Carpetas de compilación
 bin/
 obj/
-
+publicado/
+*.user
+.vs/
 # Configuración de Visual Studio
 .vs/
 *.user
