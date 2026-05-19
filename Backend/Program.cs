@@ -45,7 +45,7 @@ builder.Services.AddControllers();
 // Permite que la API sea consumida desde otros dominios.
 // Agrega CORS con una política genérica llamada "PermitirTodo".
 builder.Services.AddCors(options => {
-    options.AddDefaultPolicy(policy => {
+    options.AddPolicy("PermitirTodo", policy => {
         policy.WithOrigins(
             "http://localhost:5173",
             "https://proyecto-aplicacion-y-servicios-web.vercel.app"
